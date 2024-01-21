@@ -1,10 +1,13 @@
 {
 	"name": "wroom-wroom",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"type": "module",
 	"main": "dist/wroom.js",
 	"files": [
-		"dist"
+		"wroom.iife.js",
+		"wroom.js",
+		"wroom.umd.cjs",
+		"wroom-bookmark.iife.js"
 	],
 	"scripts": {
 		"dev": "vite",
