@@ -1,5 +1,11 @@
 # wroom-wroom
 
+## 0.0.5
+
+### Patch Changes
+
+- remove files entry
+
 ## 0.0.4
 
 ### Patch Changes

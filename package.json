@@ -1,14 +1,8 @@
 {
 	"name": "wroom-wroom",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"type": "module",
 	"main": "dist/wroom.js",
-	"files": [
-		"wroom.iife.js",
-		"wroom.js",
-		"wroom.umd.cjs",
-		"wroom-bookmark.iife.js"
-	],
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc && vite build && node bin/post-build.js",
