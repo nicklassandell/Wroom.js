@@ -1,5 +1,11 @@
 # wroom-wroom
 
+## 0.0.2
+
+### Patch Changes
+
+- 794f53d: include dist folder in build
+
 ## 0.0.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "wroom-wroom",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "main": "dist/wroom.js",
   "scripts": {
