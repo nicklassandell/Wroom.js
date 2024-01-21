@@ -1,5 +1,11 @@
 # wroom-wroom
 
+## 0.0.7
+
+### Patch Changes
+
+- kick umd, replce window with globalThis
+
 ## 0.0.6
 
 ### Patch Changes

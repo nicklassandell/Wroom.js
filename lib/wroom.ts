@@ -21,8 +21,8 @@ export default () => {
 
     let turboEnabled = false;
 
-    let px = window.innerWidth / 2;
-    let py = window.innerHeight / 2;
+    let px = globalThis.innerWidth / 2;
+    let py = globalThis.innerHeight / 2;
 
     let vx = 0;
     let vy = -maxVelocity * 3;
@@ -67,20 +67,20 @@ export default () => {
         px = px + vx;
 
         // x-asis edge wrap-around
-        if (vx > 0 && px > window.innerWidth - carImgSize - 5) {
+        if (vx > 0 && px > globalThis.innerWidth - carImgSize - 5) {
             px = 0;
         } else if (vx < 0 && px < 0) {
-            px = window.innerWidth - carImgSize - 5;
+            px = globalThis.innerWidth - carImgSize - 5;
         }
 
         // scroll up/down
-        if (vy > 0 && py > window.innerHeight + window.scrollY) {
-            window.scroll({
-                top: window.scrollY + window.innerHeight,
+        if (vy > 0 && py > globalThis.innerHeight + globalThis.scrollY) {
+            globalThis.scroll({
+                top: globalThis.scrollY + globalThis.innerHeight,
             })
-        } else if (vy < 0 && window.scrollY > py) {
-            window.scroll({
-                top: window.scrollY - window.innerHeight,
+        } else if (vy < 0 && globalThis.scrollY > py) {
+            globalThis.scroll({
+                top: globalThis.scrollY - globalThis.innerHeight,
             })
         }
 
@@ -181,7 +181,7 @@ export default () => {
 
     function startWatchingCarPosition() {
         setInterval(() => {
-            const els = document.elementsFromPoint(px - window.scrollX, py - window.scrollY);
+            const els = document.elementsFromPoint(px - globalThis.scrollX, py - globalThis.scrollY);
             const clickables = els.filter((el) => clickableNodeNames.includes(el.nodeName));
             if (clickables.length) {
                 const first = clickables[0] as HTMLElement;
@@ -241,7 +241,7 @@ export default () => {
         })
         document.addEventListener('keypress', (e) => {
             if (e.code === 'Space') {
-                const els = document.elementsFromPoint(px - window.scrollX, py - window.scrollY);
+                const els = document.elementsFromPoint(px - globalThis.scrollX, py - globalThis.scrollY);
                 if (els.length > 1) {
                     els.shift(); // remove first item, it is the car itself
                     const first = els[0] as HTMLInputElement;
@@ -275,7 +275,7 @@ export default () => {
         requestAnimationFrame(frame);
     }
 
-    function init() {
+    function start() {
         setupCarEl();
         injectCss();
         drawCar();
@@ -286,7 +286,7 @@ export default () => {
 
     return {
         start() {
-            init();
+            start();
         }
     }
 }

@@ -8,7 +8,7 @@ export default defineConfig({
             entry: resolve(__dirname, 'lib/wroom.ts'),
             name: 'WroomJS',
             fileName: 'wroom',
-            formats: ['es', 'umd', 'iife'],
+            formats: ['es', 'iife'],
         },
     }
 });
