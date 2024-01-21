@@ -1,8 +1,8 @@
 {
   "name": "wroom-wroom",
-  "private": true,
   "version": "0.0.1",
   "type": "module",
+  "main": "dist/wroom.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && node bin/post-build.js",
