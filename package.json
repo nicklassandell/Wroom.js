@@ -1,16 +1,19 @@
 {
-  "name": "wroom-wroom",
-  "version": "0.0.2",
-  "type": "module",
-  "main": "dist/wroom.js",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build && node bin/post-build.js",
-    "preview": "vite preview"
-  },
-  "devDependencies": {
-    "@changesets/cli": "^2.27.1",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.8"
-  }
+	"name": "wroom-wroom",
+	"version": "0.0.2",
+	"type": "module",
+	"main": "dist/wroom.js",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build && node bin/post-build.js",
+		"preview": "vite preview"
+	},
+	"devDependencies": {
+		"@changesets/cli": "^2.27.1",
+		"typescript": "^5.2.2",
+		"vite": "^5.0.8"
+	}
 }
