@@ -1,3 +1,4 @@
 import Wroom from "../lib/wroom.ts";
 
-Wroom.init();
+const wroom = Wroom();
+wroom.start();
