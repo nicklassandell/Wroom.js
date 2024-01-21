@@ -2,9 +2,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <link rel="icon" type="image/svg+xml" href="/vite.svg"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="src/main.css">
     <title>Vite + TS</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #282c35;
+            color: #fff;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: #1e2229;
+        }
+
+        nav {
+            float: left;
+            width: 30%;
+            padding: 20px;
+            background-color: #2f353e;
+        }
+
+        section {
+            float: left;
+            width: 60%;
+            padding: 20px;
+            background-color: #2f353e;
+        }
+
+        footer {
+            clear: both;
+            text-align: center;
+            padding: 20px;
+            background-color: #1e2229;
+        }
+
+        a {
+            text-decoration: none;
+            color: #61dafb;
+            margin-bottom: 10px;
+        }
+
+        a:hover {
+            color: #a7d8ff;
+        }
+    </style>
 </head>
 <body>
 
@@ -26,6 +72,9 @@
     <p>This is the content of Section 1. Add your text, images, and links here.</p>
     <a href="https://google.com">Link 1</a>
     <a href="https://google.com">Link 2</a>
+    <button>button hey</button>
+    <input type="text" placeholder="wee woo">
+    <div contenteditable="true">edit me</div>
 </section>
 
 <section>
@@ -214,6 +263,6 @@
     <p>&copy; 2024 Dark Mode Webpage. All rights reserved.</p>
 </footer>
 
-<script type="module" src="/src/main.ts"></script>
+<script type="module" src="/src/index.ts"></script>
 </body>
 </html>

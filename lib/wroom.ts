@@ -10,105 +10,87 @@ const carImg = {
 };
 
 const carImgSize: number = 25;
+let currCarImgSize: CarImgSize | null = null;
 
-let px = 160; //window.innerWidth / 2;
-let py = 235; //window.innerHeight / 2;
+const turboMaxVelocity: number = 40;
+const maxVelocity: number = 10;
+const step: number = .3;
+const turboStep: number = step * 5;
+const resistance: number = .8;
+
+let turboEnabled = false;
+
+let px = window.innerWidth / 2;
+let py = window.innerHeight / 2;
 
 let vx = 0;
-let vy = 0;
-
-const step = .3;
-
-const resistance = .9;
+let vy = -maxVelocity * 3;
 
 let el: HTMLImageElement | null;
 
-const maxVelocity: number = 10;
+let arrowUp: boolean = false;
+let arrowDown: boolean = false;
+let arrowLeft: boolean = false;
+let arrowRight: boolean = false;
 
-let arrowUp = false;
-let arrowDown = false;
-let arrowLeft = false;
-let arrowRight = false;
+let activeClickable: HTMLElement | null = null;
 
-let activeClickable: HTMLAnchorElement | HTMLButtonElement | null = null;
-
-setInterval(() => {
-    const els = document.elementsFromPoint(px - window.scrollX, py - window.scrollY);
-    const clickables = els.filter((el) => ['A', 'Button'].includes(el.nodeName));
-    if (clickables.length) {
-        const first = clickables[0] as HTMLAnchorElement | HTMLButtonElement;
-
-        // if activeClickable exists but is a different node
-        if (activeClickable && !first.isSameNode(activeClickable)) {
-            activeClickable.classList.remove('wroom-wroom-highlight')
-        }
-
-        first.classList.add('wroom-wroom-highlight');
-        activeClickable = first;
-    } else if (activeClickable) {
-        activeClickable.classList.remove('wroom-wroom-highlight')
-        activeClickable = null;
-    }
-}, 100)
+const clickableNodeNames = ['A', 'BUTTON', 'INPUT', 'TEXTAREA'];
+const highlightClass: string = 'wroom-wroom-highlight';
 
 function frame() {
-    if (arrowUp) {
-        vy -= step;
-    } else if (arrowDown) {
-        vy += step;
+    const computedMaxVelocity = turboEnabled ? turboMaxVelocity : maxVelocity;
+    const computedStep = turboEnabled ? turboStep : step;
+
+    // y axis acceleration
+    const yAbsVel: number = Math.abs(vy);
+    if (arrowUp && yAbsVel <= computedMaxVelocity) {
+        vy -= computedStep;
+    } else if (arrowDown && yAbsVel <= computedMaxVelocity) {
+        vy += computedStep;
     } else {
-        vy *= resistance;
+        vy = vy * resistance;
     }
 
-    if (arrowLeft) {
-        vx -= step;
-    } else if (arrowRight) {
-        vx += step;
+    // x axis acceleration
+    const xAbsVel: number = Math.abs(vx);
+    if (arrowLeft && xAbsVel <= computedMaxVelocity) {
+        vx -= computedStep;
+    } else if (arrowRight && xAbsVel <= computedMaxVelocity) {
+        vx += computedStep;
     } else {
-        vx *= resistance;
-    }
-
-    if (Math.abs(vx) > maxVelocity) {
-        if (vx < 0) {
-            vx = -maxVelocity;
-        } else {
-            vx = maxVelocity;
-        }
-    }
-    if (Math.abs(vy) > maxVelocity) {
-        if (vy < 0) {
-            vy = -maxVelocity;
-        } else {
-            vy = maxVelocity;
-        }
+        vx = vx * resistance;
     }
 
     py = py + vy;
     px = px + vx;
 
+    // x-asis edge wrap-around
     if (vx > 0 && px > window.innerWidth - carImgSize - 5) {
         px = 0;
     } else if (vx < 0 && px < 0) {
         px = window.innerWidth - carImgSize - 5;
     }
 
+    // scroll up/down
     if (vy > 0 && py > window.innerHeight + window.scrollY) {
-        console.log('goin down')
         window.scroll({
             top: window.scrollY + window.innerHeight,
         })
     } else if (vy < 0 && window.scrollY > py) {
-        console.log('goin up')
         window.scroll({
             top: window.scrollY - window.innerHeight,
         })
     }
 
     drawCar();
-    requestAnimationFrame(frame);
+
+    setTimeout(() => {
+        requestAnimationFrame(frame);
+    }, 1000 / 60);
 }
 
-function pickCarImg() {
+function pickCarImg(): CarImgSize {
     // Calculate the magnitude of the velocity vector
     const velocityMagnitude = Math.sqrt(vx * vx + vy * vy);
 
@@ -123,23 +105,50 @@ function pickCarImg() {
     const angleInDegrees = (angle * 180) / Math.PI;
 
     if (angleInDegrees >= -22.5 && angleInDegrees < 22.5) {
-        return carImg.right;
+        return <CarImgSize>{
+            name: 'right',
+            src: carImg.right,
+        };
     } else if (angleInDegrees >= 22.5 && angleInDegrees < 67.5) {
-        return carImg.bottomRight;
+        return <CarImgSize>{
+            name: 'bottomRight',
+            src: carImg.bottomRight,
+        };
     } else if (angleInDegrees >= 67.5 && angleInDegrees < 112.5) {
-        return carImg.bottom;
+        return <CarImgSize>{
+            name: 'bottom',
+            src: carImg.bottom,
+        };
     } else if (angleInDegrees >= 112.5 && angleInDegrees < 157.5) {
-        return carImg.bottomLeft;
+        return <CarImgSize>{
+            name: 'bottomLeft',
+            src: carImg.bottomLeft,
+        };
     } else if (angleInDegrees >= 157.5 || angleInDegrees < -157.5) {
-        return carImg.left;
+        return <CarImgSize>{
+            name: 'left',
+            src: carImg.left,
+        };
     } else if (angleInDegrees >= -157.5 && angleInDegrees < -112.5) {
-        return carImg.topLeft;
+        return <CarImgSize>{
+            name: 'topLeft',
+            src: carImg.topLeft,
+        };
     } else if (angleInDegrees >= -112.5 && angleInDegrees < -67.5) {
-        return carImg.top;
+        return <CarImgSize>{
+            name: 'top',
+            src: carImg.top,
+        };
     } else if (angleInDegrees >= -67.5 && angleInDegrees < -22.5) {
-        return carImg.topRight;
+        return <CarImgSize>{
+            name: 'topRight',
+            src: carImg.topRight,
+        };
     } else {
-        return carImg.bottom;
+        return <CarImgSize>{
+            name: 'bottom',
+            src: carImg.bottom,
+        };
     }
 }
 
@@ -150,7 +159,44 @@ function drawCar() {
     el.style.transform = `translateX(${pxOffset}px) translateY(${pyOffset}px)`;
     el.style.height = `${carImgSize}px`;
     el.style.width = `${carImgSize}px`;
-    el.src = pickCarImg();
+
+    // only update src if necessary
+    const carImg = pickCarImg();
+    if (carImg.name !== currCarImgSize?.name) {
+        el.src = carImg.src;
+    }
+}
+
+function isEditableElement(el: HTMLElement) {
+    if (el instanceof HTMLElement && el.isContentEditable) return true;
+    if (el instanceof HTMLInputElement) {
+        if (/|text|email|number|password|search|tel|url/.test(el.type || '')) {
+            return !(el.disabled || el.readOnly);
+        }
+    }
+    if (el instanceof HTMLTextAreaElement) return !(el.disabled || el.readOnly);
+    return false;
+}
+
+function startWatchingCarPosition() {
+    setInterval(() => {
+        const els = document.elementsFromPoint(px - window.scrollX, py - window.scrollY);
+        const clickables = els.filter((el) => clickableNodeNames.includes(el.nodeName));
+        if (clickables.length) {
+            const first = clickables[0] as HTMLElement;
+
+            // if activeClickable exists but is a different node
+            if (activeClickable && !first.isSameNode(activeClickable)) {
+                activeClickable.classList.remove(highlightClass)
+            }
+
+            first.classList.add('wroom-wroom-highlight');
+            activeClickable = first;
+        } else if (activeClickable) {
+            activeClickable.classList.remove(highlightClass)
+            activeClickable = null;
+        }
+    }, 100)
 }
 
 function setupEventListeners() {
@@ -159,18 +205,24 @@ function setupEventListeners() {
             arrowUp = true;
             arrowDown = false;
             e.preventDefault();
+            e.stopPropagation();
         } else if (e.key === 'ArrowDown') {
             arrowDown = true;
             arrowUp = false;
             e.preventDefault();
+            e.stopPropagation();
         } else if (e.key === 'ArrowLeft') {
             arrowLeft = true;
             arrowRight = false;
             e.preventDefault();
+            e.stopPropagation();
         } else if (e.key === 'ArrowRight') {
             arrowRight = true;
             arrowLeft = false;
             e.preventDefault();
+            e.stopPropagation();
+        } else if (e.key === 'Shift') {
+            turboEnabled = true;
         }
     })
     document.addEventListener('keyup', (e) => {
@@ -182,27 +234,57 @@ function setupEventListeners() {
             arrowLeft = false;
         } else if (e.key === 'ArrowRight') {
             arrowRight = false;
+        } else if (e.key === 'Shift') {
+            turboEnabled = false;
         }
     })
     document.addEventListener('keypress', (e) => {
-        if (activeClickable) {
-            activeClickable.click();
-            e.preventDefault();
-        }
-    })
+        if (e.code === 'Space') {
+            const els = document.elementsFromPoint(px - window.scrollX, py - window.scrollY);
+            if (els.length > 1) {
+                els.shift(); // remove first item, it is the car itself
+                const first = els[0] as HTMLInputElement;
 
-    document.addEventListener('click', (e) => {
-        px = e.pageX;
-        py = e.pageY;
+                // if another input field is focused, remove focus
+                if (document.activeElement && !document.activeElement.isSameNode(first) && isEditableElement((document.activeElement as HTMLElement))) {
+                    (document.activeElement as HTMLInputElement).blur();
+                }
+
+                if (isEditableElement(first)) {
+                    first.focus();
+                } else {
+                    e.preventDefault();
+                    first.click();
+                }
+            }
+        }
     })
 }
 
-function init() {
-    document.body.insertAdjacentHTML('beforeend', '<img src="" id="wroom-wroom" style="position: absolute; top: 0; left: 0; object-fit: scale-down;" />')
-    el = document.querySelector('#wroom-wroom');
-    drawCar();
-    setupEventListeners();
+function setupCarEl() {
+    document.body.insertAdjacentHTML('beforeend', '<img src="" id="wroom-wroom" style="position: absolute; top: 0; left: 0; object-fit: scale-down; z-index: 100000000;" />')
+    el = document.querySelector('#wroom-wroom') as HTMLImageElement;
+}
+
+function injectCss() {
+    document.head.insertAdjacentHTML('beforeend', `<style>.${highlightClass} { outline: 2px solid orange; outline-offset: 1px; }</style>`)
+}
+
+function startRenderLoop() {
     requestAnimationFrame(frame);
 }
 
-init();
+function init() {
+    setupCarEl();
+    injectCss();
+    drawCar();
+    setupEventListeners();
+    startRenderLoop();
+    startWatchingCarPosition();
+}
+
+export default {
+    init() {
+        init();
+    }
+};
